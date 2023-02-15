@@ -1,7 +1,7 @@
 package com.wipro.desafiowipro.resources;
 
-import com.wipro.desafiowipro.dto.EnderecoDTO;
 import com.wipro.desafiowipro.dto.EnderecoSearchtDTO;
+import com.wipro.desafiowipro.model.Endereco;
 import com.wipro.desafiowipro.services.EnderecoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class EnderecoResource {
     }
 
     @GetMapping(value = "/consulta-endereco")
-    public ResponseEntity<EnderecoDTO> consultaEndereco(@Valid @RequestBody EnderecoSearchtDTO enderecoSearchtDTO) {
+    public ResponseEntity<Endereco> consultaEndereco(@Valid  @RequestBody EnderecoSearchtDTO enderecoSearchtDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(service.consultaEndereco(enderecoSearchtDTO));
     }
 
