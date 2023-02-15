@@ -16,12 +16,12 @@ public class Endereco {
     private String ddd;
     private String siafi;
 
-    private BigDecimal frete;
+    private Double frete;
 
     public Endereco() {
     }
 
-    public Endereco(String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge, String gia, String ddd, String siafi, BigDecimal frete) {
+    public Endereco(String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge, String gia, String ddd, String siafi, Double frete) {
         this.cep = cep;
         this.logradouro = logradouro;
         this.complemento = complemento;
@@ -115,11 +115,11 @@ public class Endereco {
         this.siafi = siafi;
     }
 
-    public BigDecimal getFrete() {
+    public Double getFrete() {
         return frete;
     }
 
-    public void setFrete(BigDecimal frete) {
+    public void setFrete(Double frete) {
         this.frete = frete;
     }
 }
