@@ -6,6 +6,7 @@ import com.wipro.desafiowipro.model.Endereco;
 import com.wipro.desafiowipro.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,12 +20,15 @@ public class EnderecoService {
         }
 
         public Endereco consultaEndereco(EnderecoSearchtDTO dto) {
-            //try{
                 String url = "https://viacep.com.br/ws/" + dto.getCep() + "/json/";
-                return restTemplate.getForObject(url, Endereco.class);
-//            }catch (Exception e){
-//                throw new ResourceNotFoundException("Cep não encontrado");
-//            }
 
+                ResponseEntity<String> response =
+                        restTemplate.getForEntity(url, String.class);
+                String responseBody = response.getBody();
+                if (responseBody != null && responseBody.contains("erro")){
+                        throw new IllegalArgumentException("CEP inválido");
+                }
+
+                return restTemplate.getForObject(url, Endereco.class);
         }
 }
