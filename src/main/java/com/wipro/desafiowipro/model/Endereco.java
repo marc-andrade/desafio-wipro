@@ -1,8 +1,6 @@
 package com.wipro.desafiowipro.model;
 
 
-import java.math.BigDecimal;
-
 public class Endereco {
 
     private String cep;
@@ -15,7 +13,6 @@ public class Endereco {
     private String gia;
     private String ddd;
     private String siafi;
-
     private Double frete;
 
     public Endereco() {

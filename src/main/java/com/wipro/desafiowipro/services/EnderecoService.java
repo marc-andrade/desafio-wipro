@@ -1,5 +1,6 @@
 package com.wipro.desafiowipro.services;
 
+import com.wipro.desafiowipro.dto.EnderecoDTO;
 import com.wipro.desafiowipro.dto.EnderecoSearchtDTO;
 import com.wipro.desafiowipro.model.Endereco;
 import com.wipro.desafiowipro.services.exceptions.EntityNotFoundException;
@@ -8,14 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class EnderecoService {
 
-        private RestTemplate restTemplate;
+        private final RestTemplate restTemplate;
         private static final List<String> NORTE = Arrays.asList("AC", "AM", "AP", "PA", "RO", "RR", "TO");
         private static final List<String> NORDESTE = Arrays.asList("AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE");
         private static final List<String> CENTRO_OESTE = Arrays.asList("DF", "GO", "MT", "MS");
@@ -26,7 +26,7 @@ public class EnderecoService {
             this.restTemplate = restTemplateBuilder.build();
         }
 
-        public Endereco consultaEndereco(EnderecoSearchtDTO dto) {
+        public EnderecoDTO consultaEndereco(EnderecoSearchtDTO dto) {
                 String url = "https://viacep.com.br/ws/" + dto.getCep() + "/json/";
 
                 ResponseEntity<String> response =
@@ -42,7 +42,8 @@ public class EnderecoService {
 
                 if (uf != null) {
                       endereco.setFrete(calcularFrete(uf));
-                        return endereco;
+
+                      return new EnderecoDTO(endereco);
                 }else {
                         throw new EntityNotFoundException("Erro ao calcular o frete.");
                 }
@@ -63,6 +64,5 @@ public class EnderecoService {
                         return null;
                 }
         }
-
 
 }
