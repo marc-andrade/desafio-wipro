@@ -52,7 +52,7 @@ class EnderecoServiceTest {
         assertEquals(endereco.getLocalidade(), result.getCidade());
         assertEquals(endereco.getBairro(), result.getBairro());
         assertEquals(endereco.getLogradouro(), result.getRua());
-        assertEquals(result.getClass(), EnderecoDTO.class);
+        assertEquals( EnderecoDTO.class,result.getClass());
     }
 
     @Test
@@ -60,7 +60,7 @@ class EnderecoServiceTest {
 
         double result = service.calcularFrete(endereco.getUf());
 
-        assertEquals(result, 7.85);
+        assertEquals(7.85, result);
     }
 
     @Test
