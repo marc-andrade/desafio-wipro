@@ -49,7 +49,7 @@ public class EnderecoService {
                 }
         }
 
-        public static Double calcularFrete(String state) {
+        public Double calcularFrete(String state) {
                 if (NORTE.contains(state)) {
                         return 20.83;
                 } else if (NORDESTE.contains(state)) {

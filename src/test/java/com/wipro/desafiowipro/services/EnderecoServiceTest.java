@@ -6,31 +6,40 @@ import com.wipro.desafiowipro.model.Endereco;
 import com.wipro.desafiowipro.tests.Factory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class EnderecoServiceTest {
 
-    @InjectMocks
-    private EnderecoService service;
-//    @Mock
-//    private RestTemplate restTemplateMock;
     private EnderecoSearchtDTO searchtDTO;
     private Endereco endereco;
+    private EnderecoService service;
 
     @BeforeEach
     void setUp() throws Exception {
         searchtDTO = Factory.createEnderecoSearch();
         endereco = Factory.createEndereco();
-        RestTemplate restTemplateMock = Mockito.mock(RestTemplate.class);
-        Mockito.when(restTemplateMock.getForObject(anyString(),eq(Endereco.class))).thenReturn(endereco);
 
+        RestTemplate restTemplate = mock(RestTemplate.class);
+        RestTemplateBuilder restTemplateBuilder = mock(RestTemplateBuilder.class);
+        when(restTemplateBuilder.build()).thenReturn(restTemplate);
+        service = new EnderecoService(restTemplateBuilder);
+
+        String responseBody = "{\"uf\":\"SP\"}";
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(responseBody, HttpStatus.OK);
+        when(restTemplate.getForEntity(eq("https://viacep.com.br/ws/01234567/json/"), eq(String.class)))
+                .thenReturn(responseEntity);
+        when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(String.class)))
+                .thenReturn(responseEntity);
+        when(restTemplate.getForObject(anyString(),eq(Endereco.class))).thenReturn(endereco);
     }
 
     @Test
@@ -43,10 +52,23 @@ class EnderecoServiceTest {
         assertEquals(endereco.getLocalidade(), result.getCidade());
         assertEquals(endereco.getBairro(), result.getBairro());
         assertEquals(endereco.getLogradouro(), result.getRua());
+        assertEquals(result.getClass(), EnderecoDTO.class);
     }
 
     @Test
-    void calcularFrete() {
+    void calcularFreteShouldReturnValueWhenValidUfOrEstado() {
+
+        double result = service.calcularFrete(endereco.getUf());
+
+        assertEquals(result, 7.85);
+    }
+
+    @Test
+    void calcularFreteShouldReturnNullWhenInValidUfOrEstado() {
+
+        Double result = service.calcularFrete("xx");
+
+        assertNull(result);
     }
 
 }
