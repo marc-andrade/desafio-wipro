@@ -37,7 +37,7 @@ public class EnderecoService {
 
         Endereco endereco = response.getBody();
 
-        String uf = endereco != null ? endereco.getUf() : null;
+        String uf = endereco.getUf();
 
         if (uf != null) {
             endereco.setFrete(calcularFrete(uf));
