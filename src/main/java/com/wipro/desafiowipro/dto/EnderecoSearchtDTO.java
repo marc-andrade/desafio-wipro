@@ -1,7 +1,7 @@
 package com.wipro.desafiowipro.dto;
 
-import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 public class EnderecoSearchtDTO {
