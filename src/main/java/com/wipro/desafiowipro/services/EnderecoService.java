@@ -16,52 +16,52 @@ import java.util.Objects;
 @Service
 public class EnderecoService {
 
-        @Autowired
-        private RestTemplate restTemplate;
-        private static final List<String> NORTE = Arrays.asList("AC", "AM", "AP", "PA", "RO", "RR", "TO");
-        private static final List<String> NORDESTE = Arrays.asList("AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE");
-        private static final List<String> CENTRO_OESTE = Arrays.asList("DF", "GO", "MT", "MS");
-        private static final List<String> SUDESTE = Arrays.asList("ES", "MG", "RJ", "SP");
-        private static final List<String> SUL = Arrays.asList("PR", "RS", "SC");
+    @Autowired
+    private RestTemplate restTemplate;
+    private static final List<String> NORTE = Arrays.asList("AC", "AM", "AP", "PA", "RO", "RR", "TO");
+    private static final List<String> NORDESTE = Arrays.asList("AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE");
+    private static final List<String> CENTRO_OESTE = Arrays.asList("DF", "GO", "MT", "MS");
+    private static final List<String> SUDESTE = Arrays.asList("ES", "MG", "RJ", "SP");
+    private static final List<String> SUL = Arrays.asList("PR", "RS", "SC");
 
 
-        public EnderecoDTO consultaEndereco(EnderecoSearchtDTO dto) {
-                String url = "https://viacep.com.br/ws/" + dto.getCep() + "/json/";
+    public EnderecoDTO consultaEndereco(EnderecoSearchtDTO dto) {
+        String url = "https://viacep.com.br/ws/" + dto.getCep() + "/json/";
 
-                ResponseEntity<Endereco> response =
-                        restTemplate.getForEntity(url, Endereco.class);
-                String responseBody = Objects.requireNonNull(response.getBody()).toString();
-                if (responseBody != null && responseBody.contains("erro")){
-                        throw new EntityNotFoundException("CEP inválido");
-                }
+        ResponseEntity<Endereco> response =
+                restTemplate.getForEntity(url, Endereco.class);
 
-                Endereco endereco = response.getBody();
-
-                String uf = endereco != null ? endereco.getUf() : null;
-
-                if (uf != null) {
-                      endereco.setFrete(calcularFrete(uf));
-
-                      return new EnderecoDTO(endereco);
-                }else {
-                        throw new EntityNotFoundException("Erro ao calcular o frete.");
-                }
+        if (Objects.requireNonNull(response.getBody()).getCep() == null) {
+            throw new EntityNotFoundException("CEP inválido");
         }
 
-        public Double calcularFrete(String state) {
-                if (NORTE.contains(state)) {
-                        return 20.83;
-                } else if (NORDESTE.contains(state)) {
-                        return 15.98;
-                } else if (CENTRO_OESTE.contains(state)) {
-                        return 12.50;
-                } else if (SUDESTE.contains(state)) {
-                        return 7.85;
-                } else if (SUL.contains(state)) {
-                        return 17.3;
-                } else {
-                        return null;
-                }
+        Endereco endereco = response.getBody();
+
+        String uf = endereco != null ? endereco.getUf() : null;
+
+        if (uf != null) {
+            endereco.setFrete(calcularFrete(uf));
+
+            return new EnderecoDTO(endereco);
+        } else {
+            throw new EntityNotFoundException("Erro ao calcular o frete.");
         }
+    }
+
+    public Double calcularFrete(String state) {
+        if (NORTE.contains(state)) {
+            return 20.83;
+        } else if (NORDESTE.contains(state)) {
+            return 15.98;
+        } else if (CENTRO_OESTE.contains(state)) {
+            return 12.50;
+        } else if (SUDESTE.contains(state)) {
+            return 7.85;
+        } else if (SUL.contains(state)) {
+            return 17.3;
+        } else {
+            return null;
+        }
+    }
 
 }
